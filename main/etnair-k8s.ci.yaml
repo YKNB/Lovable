@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: etnair
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: etnair-secret
+  namespace: etnair
+type: Opaque
+stringData:
+  # ===== DB (API) =====
+  POSTGRES_USER: etnair_user
+  POSTGRES_PASSWORD: etnair_pass
+  POSTGRES_DB: etnair_db
+
+  # ===== JWT =====
+  JWT_SECRET: dev_secret
+
+  # ===== MinIO / S3 (API) =====
+  S3_ENDPOINT: http://minio:9000
+  S3_REGION: us-east-1
+  S3_ACCESS_KEY: minioadmin
+  S3_SECRET_KEY: minioadmin123
+  S3_BUCKET: etnair
+
+ 
+  S3_PUBLIC_BASE_URL: http://172.16.250.11:30900/etnair
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etnair-api
+  namespace: etnair
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etnair-api
+  template:
+    metadata:
+      labels:
+        app: etnair-api
+    spec:
+      containers:
+        - name: api
+          
+          image: karl123/etnair-api:1.3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DB_HOST
+              value: "postgresql"
+            - name: DATABASE_URL
+              value: "postgresql://etnair_user:etnair_pass@postgresql:5432/etnair_db"
+          envFrom:
+            - secretRef:
+                name: etnair-secret
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etnair-api
+  namespace: etnair
+spec:
+  type: NodePort
+  selector:
+    app: etnair-api
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      nodePort: 30080

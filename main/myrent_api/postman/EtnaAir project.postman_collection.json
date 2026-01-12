@@ -1,0 +1,477 @@
+{
+	"info": {
+		"_postman_id": "0d0676b2-38a4-4369-8cb1-ef22deca45d6",
+		"name": "EtnaAir project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5733863",
+		"_collection_link": "https://lunar-resonance-465884.postman.co/workspace/TIC-GPE~0288dbfe-e625-44e6-98d0-92aba507fb8f/collection/5733863-0d0676b2-38a4-4369-8cb1-ef22deca45d6?action=share&source=collection_link&creator=5733863"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_name\": \"Araud\",\r\n  \"last_name\": \"LUITRE\",\r\n  \"email\": \"arnaud@gmail.com\",\r\n  \"password\": \"Password123!\",\r\n  \"role\": \"OWNER\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"arnaud@gmail.com\",\r\n  \"password\": \"Password123!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Créer un logement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4Nzg2MTcsImV4cCI6MTc2NTg4NTgxN30.10PZ1J6Qq_7gj0m4jn5VbnVrQ2dFKC_TwCF9l2_tqRs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Studio cosy centre-ville\",\r\n  \"description\": \"Proche métro, lumineux\",\r\n  \"price_per_night\": 80.70,\r\n  \"city\": \"Lyon\",\r\n  \"address\": \"10 rue martinique\",\r\n  \"max_guests\": 1\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/properties",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "réserver logement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzYWIwYzkxYi01MTc5LTRhNzItODlhNi1jMWY2MWQ5OWJlODYiLCJyb2xlIjoiVEVOQU5UIiwiZW1haWwiOiJseWRpYUBnbWFpbC5jb20iLCJpYXQiOjE3NjU4ODMyODIsImV4cCI6MTc2NTg5MDQ4Mn0.5QQcpj471vebgfYndvCvvzQQGEWUoTg1uaxZGJDvIhY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"property_id\": \"8a9323d8-cfb4-4018-9765-a62fe949a836\",\r\n  \"start_date\": \"2025-12-20\",\r\n  \"end_date\": \"2025-12-23\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/bookings",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "current user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4Nzg2MTcsImV4cCI6MTc2NTg4NTgxN30.10PZ1J6Qq_7gj0m4jn5VbnVrQ2dFKC_TwCF9l2_tqRs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lister les logements",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/properties",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logement by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/properties/property_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties",
+						"property_id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "réservation locataire",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzYWIwYzkxYi01MTc5LTRhNzItODlhNi1jMWY2MWQ5OWJlODYiLCJyb2xlIjoiVEVOQU5UIiwiZW1haWwiOiJseWRpYUBnbWFpbC5jb20iLCJpYXQiOjE3NjU4OTU0MjksImV4cCI6MTc2NTkwMjYyOX0.XXGWco8hvroHu8sS2Y2Kz9iGgeu6MG0R8syhhQvhQUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/bookings/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "réservation proprietaire",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0YWVkNDVkYy1hNzI1LTQxY2EtYWM2OS0xODRhMTNmMjAyM2QiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImFybmF1ZEBnbWFpbC5jb20iLCJpYXQiOjE3NjU4OTUzNTcsImV4cCI6MTc2NTkwMjU1N30.W_CB2YdXn-gtFGfpyunETMJ3M7LWkFVNwDfNIjn_X3k",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/bookings/owned",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings",
+						"owned"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "modifier Logements",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4Nzg2MTcsImV4cCI6MTc2NTg4NTgxN30.10PZ1J6Qq_7gj0m4jn5VbnVrQ2dFKC_TwCF9l2_tqRs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"description\": \"Proche métro, lumineux et spacieux\"}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/properties/property_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties",
+						"property_id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "modifier Logement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4Nzg2MTcsImV4cCI6MTc2NTg4NTgxN30.10PZ1J6Qq_7gj0m4jn5VbnVrQ2dFKC_TwCF9l2_tqRs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"price_per_night\": 59.99 }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/properties/property_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties",
+						"property_id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirmer réservation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4ODQzMzQsImV4cCI6MTc2NTg5MTUzNH0.rW1hGi4DSmR4Ffl-CBmwiD08W0P813RPWftWtD9CZes",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/bookings/id_reservation/confirm",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings",
+						"id_reservation",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel réservation proprietaire",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0YWVkNDVkYy1hNzI1LTQxY2EtYWM2OS0xODRhMTNmMjAyM2QiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImFybmF1ZEBnbWFpbC5jb20iLCJpYXQiOjE3NjU4ODkxOTksImV4cCI6MTc2NTg5NjM5OX0.tjL2_SiOz2yO5y0Bqr81exymROmXA7Rio_THOXSesMU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/bookings/id_logement/cancel-by-owner",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings",
+						"id_logement",
+						"cancel-by-owner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel réservation locataire",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzYWIwYzkxYi01MTc5LTRhNzItODlhNi1jMWY2MWQ5OWJlODYiLCJyb2xlIjoiVEVOQU5UIiwiZW1haWwiOiJseWRpYUBnbWFpbC5jb20iLCJpYXQiOjE3NjU4OTA4NDQsImV4cCI6MTc2NTg5ODA0NH0.ZDfx-gU7jrRQp--d9mEOMHe88dRPfkCS8EWc1JW",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/bookings/id_logement/cancel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"bookings",
+						"id_logement",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "supprime logement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWQ2ZDAxYi0zNmQ1LTQzOWEtOTc4ZC0zMDBiMmU3YjNjZjAiLCJyb2xlIjoiT1dORVIiLCJlbWFpbCI6ImthcmxAdGVzdC5jb20iLCJpYXQiOjE3NjU4Nzg2MTcsImV4cCI6MTc2NTg4NTgxN30.10PZ1J6Qq_7gj0m4jn5VbnVrQ2dFKC_TwCF9l2_tqRs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/properties/property_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"properties",
+						"property_id"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

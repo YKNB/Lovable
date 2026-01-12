@@ -1,0 +1,79 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-init
+  namespace: etnair
+spec:
+  backoffLimit: 12
+  template:
+    spec:
+      restartPolicy: Never
+
+      volumes:
+        - name: mc-config
+          emptyDir: {}
+
+      initContainers:
+        # 1) Alias (et "wait" implicite via retries)
+        - name: mc-alias
+          image: minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: S3_ACCESS_KEY
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: S3_SECRET_KEY
+          command: ["mc"]
+          args: ["alias", "set", "local", "http://minio:9000", "$(MINIO_ROOT_USER)", "$(MINIO_ROOT_PASSWORD)", "--api", "S3v4"]
+          volumeMounts:
+            - name: mc-config
+              mountPath: /root/.mc
+
+        # 2) Bucket create (idempotent)
+        - name: mc-mb
+          image: minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: S3_BUCKET
+          command: ["mc"]
+          args: ["mb", "-p", "local/$(S3_BUCKET)"]
+          volumeMounts:
+            - name: mc-config
+              mountPath: /root/.mc
+
+        # 3) Public read (download)
+        - name: mc-public
+          image: minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: S3_BUCKET
+          command: ["mc"]
+          args: ["anonymous", "set", "download", "local/$(S3_BUCKET)"]
+          volumeMounts:
+            - name: mc-config
+              mountPath: /root/.mc
+
+      containers:
+        # container “dummy” pour que le pod termine OK après les initContainers
+        - name: done
+          image: minio/mc:latest
+          command: ["mc"]
+          args: ["--version"]
+          volumeMounts:
+            - name: mc-config
+              mountPath: /root/.mc
+

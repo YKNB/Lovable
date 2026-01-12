@@ -1,0 +1,77 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">ETNAir</a>
+    <button class="menu-toggle" type="button" (click)="toggleMenu()" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav class="nav" [class.open]="menuOpen()">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        Annonces
+      </a>
+      <a
+        routerLink="/bookings/me"
+        routerLinkActive="active"
+        *ngIf="auth.user()?.role === 'TENANT'"
+        (click)="closeMenu()"
+      >
+        Mes reservations
+      </a>
+      <a
+        routerLink="/bookings/owned"
+        routerLinkActive="active"
+        *ngIf="auth.user()?.role === 'OWNER'"
+        (click)="closeMenu()"
+      >
+        Reservations owner
+      </a>
+      <a
+        routerLink="/owner/properties/new"
+        routerLinkActive="active"
+        *ngIf="auth.user()?.role === 'OWNER' || auth.user()?.role === 'ADMIN'"
+        (click)="closeMenu()"
+      >
+        Creer un bien
+      </a>
+      <a
+        routerLink="/owner/properties/manage"
+        routerLinkActive="active"
+        *ngIf="auth.user()?.role === 'OWNER' || auth.user()?.role === 'ADMIN'"
+        (click)="closeMenu()"
+      >
+        Gerer un bien
+      </a>
+      <a routerLink="/profile" routerLinkActive="active" *ngIf="auth.user()" (click)="closeMenu()">
+        Mon profil
+      </a>
+    </nav>
+    <div class="auth">
+      <ng-container *ngIf="auth.user(); else guest">
+        <div class="user-pill">
+          {{ auth.user()?.first_name }} {{ auth.user()?.last_name }}
+          <span class="role">{{ auth.user()?.role }}</span>
+        </div>
+        <button class="ghost" type="button" (click)="logout()">Deconnexion</button>
+      </ng-container>
+      <ng-template #guest>
+        <a class="ghost" routerLink="/login">Connexion</a>
+        <a class="primary" routerLink="/register">Inscription</a>
+      </ng-template>
+    </div>
+  </header>
+
+  <main class="page">
+    <router-outlet />
+  </main>
+
+  <div class="loading-overlay" *ngIf="loading.isLoading()">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+</div>

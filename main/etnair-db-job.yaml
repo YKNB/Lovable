@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: etnair-db-init
+  namespace: etnair
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: db-init
+          image: postgres:16
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: POSTGRES_DB
+            - name: PGHOST
+              value: "postgresql"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: etnair-secret
+                  key: POSTGRES_PASSWORD
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -e
+              echo "⏳ Waiting for Postgres..."
+              until pg_isready -h "$PGHOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do
+                sleep 2
+              done
+              echo "Postgres is ready. Running init SQL..."
+              psql -v ON_ERROR_STOP=1 -h "$PGHOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /sql/01_etnair_init.sql
+              echo "🎉 DB init done."
+          volumeMounts:
+            - name: init-sql
+              mountPath: /sql
+      volumes:
+        - name: init-sql
+          configMap:
+            name: etnair-db-init

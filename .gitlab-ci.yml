@@ -1,0 +1,27 @@
+stages:
+  - deploy
+
+deploy_k8s:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  only:
+    - main
+  script:
+    # 1) Kubeconfig fourni via variable GitLab (masked/protected)
+    - mkdir -p ~/.kube
+    - printf "%s" "$KUBECONFIG_CONTENT" > ~/.kube/config
+
+    # 2) Sanity check
+    - kubectl get ns
+
+    # 3) Deploy API only (safe)
+    - kubectl apply -f etnair/etnair-k8s.ci.yaml
+
+    # 4) Restart + wait rollout
+    - kubectl -n etnair rollout restart deploy/etnair-api
+    - kubectl -n etnair rollout status deploy/etnair-api --timeout=180s
+
+    # 5) Quick view
+    - kubectl -n etnair get pods -o wide
+
+

@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bookings {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String         @db.Uuid
+  property_id String         @db.Uuid
+  start_date  DateTime       @db.Date
+  end_date    DateTime       @db.Date
+  total_price Decimal        @db.Decimal(10, 2)
+  status      booking_status @default(PENDING)
+  created_at  DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime       @default(now()) @db.Timestamptz(6)
+  properties  properties     @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users          @relation(fields: [tenant_id], references: [id], onUpdate: NoAction)
+
+  @@index([property_id, start_date, end_date], map: "idx_bookings_property_dates")
+  @@index([property_id], map: "idx_bookings_property_id")
+  @@index([status], map: "idx_bookings_status")
+  @@index([tenant_id], map: "idx_bookings_tenant_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model properties {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  owner_id              String                  @db.Uuid
+  title                 String                  @db.VarChar(150)
+  description           String?
+  price_per_night       Decimal                 @db.Decimal(10, 2)
+  city                  String                  @db.VarChar(120)
+  address               String?
+  max_guests            Int                     @default(1)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  image_url             String?                 @db.VarChar(500)
+  bookings              bookings[]
+  users                 users                   @relation(fields: [owner_id], references: [id])
+  property_availability property_availability[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model property_availability {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  property_id  String     @db.Uuid
+  start_date   DateTime   @db.Date
+  end_date     DateTime   @db.Date
+  is_available Boolean    @default(true)
+  created_at   DateTime   @default(now()) @db.Timestamptz(6)
+  properties   properties @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "availability_property_id_fkey")
+
+  @@index([property_id, start_date, end_date], map: "idx_availability_property_dates")
+  @@index([property_id], map: "idx_availability_property_id")
+}
+
+model users {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  first_name    String       @db.VarChar(100)
+  last_name     String       @db.VarChar(100)
+  email         String       @unique @db.VarChar(255)
+  password_hash String       @db.VarChar(255)
+  role          user_role    @default(TENANT)
+  created_at    DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime     @default(now()) @db.Timestamptz(6)
+  bookings      bookings[]
+  properties    properties[]
+
+  @@index([role], map: "idx_users_role")
+}
+
+enum booking_status {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum user_role {
+  TENANT
+  OWNER
+  ADMIN
+}

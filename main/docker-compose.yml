@@ -1,0 +1,122 @@
+services:
+  db:
+    image: postgres:16
+    container_name: etnair-db
+    environment:
+      POSTGRES_USER: etnair_user
+      POSTGRES_PASSWORD: etnair_pass
+      POSTGRES_DB: etnair_db
+    volumes:
+      
+      - ./db/db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - etnair_net
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U etnair_user -d etnair_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: etnair-api
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_USER: etnair_user
+      DB_PASSWORD: etnair_pass
+      DB_NAME: etnair_db
+      DATABASE_URL: postgresql://etnair_user:etnair_pass@db:5432/etnair_db
+      JWT_SECRET: dev_secret
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin123
+      S3_BUCKET: etnair
+      S3_PUBLIC_BASE_URL: http://localhost:9000/etnair
+    command: sh -c "npx prisma generate && npm run dev"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - etnair_net
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend/myrent
+      dockerfile: Dockerfile
+    container_name: etnair-frontend
+    depends_on:
+      - api
+    networks:
+      - etnair_net
+    ports:
+      - "4200:80"
+
+  minio:
+    image: minio/minio:latest
+    container_name: etnair-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    networks:
+      - etnair_net
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123;
+      mc mb -p local/etnair || true;
+      mc anonymous set download local/etnair;
+      echo 'Bucket etnair ready (public read)';
+      "
+    restart: "no"
+    networks:
+      - etnair_net
+
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: etnair-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@etnair.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - etnair_net
+    ports:
+      - "5050:80"
+
+
+networks:
+  etnair_net:
+    driver: bridge
+
+volumes:
+  minio_data:

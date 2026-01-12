@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: etnair-postgres-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /data/etnair/postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: etnair-postgres-pvc
+  namespace: etnair
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: etnair-postgres-pv
+
